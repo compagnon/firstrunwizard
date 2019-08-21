@@ -30,6 +30,5 @@
 
 <div class="page intro" data-title="<?php p($theme->getSlogan()); ?>" data-subtitle="">
 	<div class="content">
-
 	</div>
 </div>

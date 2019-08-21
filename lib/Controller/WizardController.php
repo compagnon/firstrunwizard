@@ -84,6 +84,11 @@ class WizardController extends Controller {
 		];
 
 		$slides = [
+			$this->staticSlide('page.intro', $data)
+		];
+
+		/*
+		$slides = [
 			$this->staticSlide('page.intro', $data),
 			$this->staticSlide('page.values', $data)
 		];
@@ -92,7 +97,7 @@ class WizardController extends Controller {
 		}
 		$slides[] = $this->staticSlide('page.clients', $data);
 		$slides[] = $this->staticSlide('page.final', $data);
-
+		*/
 		return new JSONResponse($slides);
 	}
 

@@ -17,8 +17,13 @@
 						{{ oc_defaults.name }}
 					</p>
 				</div>
+				<div class="logo-header">
+					<p class="hidden-visually">
+						{{ oc_defaults.name }}
+					</p>
+				</div>
 				<!-- eslint-disable-next-line vue/no-v-html -->
-				<h2 v-html="oc_defaults.slogan" />
+				<!--h2 v-html="oc_defaults.slogan" /-->
 				<p />
 			</div>
 		</div>
@@ -56,9 +61,10 @@
 				width: 70vw;
 				.content {
 					padding: 0;
-					background-image: url('../img/intro.png');
+					background-image: url('../img/logo-firstrunwizard.svg');
 					background-position: center;
-					background-size: cover;
+					background-size: auto;
+					background-repeat: no-repeat;
 					height: 50vh;
 
 					img {
@@ -214,6 +220,10 @@
 			.firstrunwizard-header div.logo {
 				background-size: 120px;
 			}
+			.firstrunwizard-header div.logo-header {
+				background-size: 120px;
+			}
+
 			h2 {
 				font-size: 20px;
 			}
@@ -252,6 +262,14 @@
 			background-size: cover;
 			color: var(--color-primary-text);
 			text-align: center;
+			.logo-header {
+				background: var(--image-logoheader) no-repeat left;
+				background-size: contain;
+				width: 175px;
+				height: 120px;
+				margin: 0 auto;
+				max-height: 10vh;
+			}
 			.logo {
 				background: var(--image-logo) no-repeat center;
 				background-size: contain;
@@ -260,7 +278,7 @@
 				margin: 0 auto;
 				max-height: 10vh;
 			}
-			h2 {
+						h2 {
 				font-size: 4vh;
 				margin-top: 3vh;
 				line-height: 5vh;
@@ -358,7 +376,7 @@ export default {
 	methods: {
 		open() {
 			var img = new Image()
-			img.src = require('../img/intro.png')
+			img.src = require('../img/logo-firstrunwizard.svg')
 			img.onload = () => {
 				this.showModal = true
 			}
