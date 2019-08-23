@@ -84,20 +84,20 @@ class WizardController extends Controller {
 		];
 
 		$slides = [
-			$this->staticSlide('page.intro', $data)
+			$this->staticSlide('page.intro', $data),
+			$this->staticSlide('page.values.sagis', $data),
+			$this->staticSlide('page.dossier.sagis', $data),
+			$this->staticSlide('page.dossiernouveau.sagis', $data),
+			$this->staticSlide('page.aide.sagis', $data),
+			$this->staticSlide('page.contact.sagis', $data),
+			$this->staticSlide('page.clientsmobiles.sagis', $data),
+			$this->staticSlide('page.final.sagis', $data),
+			$this->staticSlide('page.values', $data),
+			$this->staticSlide('page.apps', $data),
+			$this->staticSlide('page.clients', $data),			
+			$this->staticSlide('page.final', $data),
 		];
 
-		/*
-		$slides = [
-			$this->staticSlide('page.intro', $data),
-			$this->staticSlide('page.values', $data)
-		];
-		if ($this->groupManager->isAdmin($this->userId)) {
-			$slides[] = $this->staticSlide('page.apps', $data);
-		}
-		$slides[] = $this->staticSlide('page.clients', $data);
-		$slides[] = $this->staticSlide('page.final', $data);
-		*/
 		return new JSONResponse($slides);
 	}
 

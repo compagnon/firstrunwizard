@@ -124,6 +124,7 @@ var buildURL = __webpack_require__(/*! ./../helpers/buildURL */ "./node_modules/
 var parseHeaders = __webpack_require__(/*! ./../helpers/parseHeaders */ "./node_modules/axios/lib/helpers/parseHeaders.js");
 var isURLSameOrigin = __webpack_require__(/*! ./../helpers/isURLSameOrigin */ "./node_modules/axios/lib/helpers/isURLSameOrigin.js");
 var createError = __webpack_require__(/*! ../core/createError */ "./node_modules/axios/lib/core/createError.js");
+var btoa = (typeof window !== 'undefined' && window.btoa && window.btoa.bind(window)) || __webpack_require__(/*! ./../helpers/btoa */ "./node_modules/axios/lib/helpers/btoa.js");
 
 module.exports = function xhrAdapter(config) {
   return new Promise(function dispatchXhrRequest(resolve, reject) {
@@ -135,6 +136,22 @@ module.exports = function xhrAdapter(config) {
     }
 
     var request = new XMLHttpRequest();
+    var loadEvent = 'onreadystatechange';
+    var xDomain = false;
+
+    // For IE 8/9 CORS support
+    // Only supports POST and GET calls and doesn't returns the response headers.
+    // DON'T do this for testing b/c XMLHttpRequest is mocked, not XDomainRequest.
+    if ( true &&
+        typeof window !== 'undefined' &&
+        window.XDomainRequest && !('withCredentials' in request) &&
+        !isURLSameOrigin(config.url)) {
+      request = new window.XDomainRequest();
+      loadEvent = 'onload';
+      xDomain = true;
+      request.onprogress = function handleProgress() {};
+      request.ontimeout = function handleTimeout() {};
+    }
 
     // HTTP basic authentication
     if (config.auth) {
@@ -149,8 +166,8 @@ module.exports = function xhrAdapter(config) {
     request.timeout = config.timeout;
 
     // Listen for ready state
-    request.onreadystatechange = function handleLoad() {
-      if (!request || request.readyState !== 4) {
+    request[loadEvent] = function handleLoad() {
+      if (!request || (request.readyState !== 4 && !xDomain)) {
         return;
       }
 
@@ -167,8 +184,9 @@ module.exports = function xhrAdapter(config) {
       var responseData = !config.responseType || config.responseType === 'text' ? request.responseText : request.response;
       var response = {
         data: responseData,
-        status: request.status,
-        statusText: request.statusText,
+        // IE sends 1223 instead of 204 (https://github.com/axios/axios/issues/201)
+        status: request.status === 1223 ? 204 : request.status,
+        statusText: request.status === 1223 ? 'No Content' : request.statusText,
         headers: responseHeaders,
         config: config,
         request: request
@@ -981,6 +999,54 @@ module.exports = function bind(fn, thisArg) {
 
 /***/ }),
 
+/***/ "./node_modules/axios/lib/helpers/btoa.js":
+/*!************************************************!*\
+  !*** ./node_modules/axios/lib/helpers/btoa.js ***!
+  \************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+// btoa polyfill for IE<10 courtesy https://github.com/davidchambers/Base64.js
+
+var chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';
+
+function E() {
+  this.message = 'String contains an invalid character';
+}
+E.prototype = new Error;
+E.prototype.code = 5;
+E.prototype.name = 'InvalidCharacterError';
+
+function btoa(input) {
+  var str = String(input);
+  var output = '';
+  for (
+    // initialize result and counter
+    var block, charCode, idx = 0, map = chars;
+    // if the next str index does not exist:
+    //   change the mapping table to "="
+    //   check if d has no fractional digits
+    str.charAt(idx | 0) || (map = '=', idx % 1);
+    // "8 - idx % 1 * 8" generates the sequence 2, 4, 6, 8
+    output += map.charAt(63 & block >> 8 - idx % 1 * 8)
+  ) {
+    charCode = str.charCodeAt(idx += 3 / 4);
+    if (charCode > 0xFF) {
+      throw new E();
+    }
+    block = block << 8 | charCode;
+  }
+  return output;
+}
+
+module.exports = btoa;
+
+
+/***/ }),
+
 /***/ "./node_modules/axios/lib/helpers/buildURL.js":
 /*!****************************************************!*\
   !*** ./node_modules/axios/lib/helpers/buildURL.js ***!
@@ -1395,7 +1461,7 @@ module.exports = function spread(callback) {
 
 
 var bind = __webpack_require__(/*! ./helpers/bind */ "./node_modules/axios/lib/helpers/bind.js");
-var isBuffer = __webpack_require__(/*! is-buffer */ "./node_modules/axios/node_modules/is-buffer/index.js");
+var isBuffer = __webpack_require__(/*! is-buffer */ "./node_modules/is-buffer/index.js");
 
 /*global toString:true*/
 
@@ -1699,28 +1765,6 @@ module.exports = {
 
 /***/ }),
 
-/***/ "./node_modules/axios/node_modules/is-buffer/index.js":
-/*!************************************************************!*\
-  !*** ./node_modules/axios/node_modules/is-buffer/index.js ***!
-  \************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports) {
-
-/*!
- * Determine if an object is a Buffer
- *
- * @author   Feross Aboukhadijeh <https://feross.org>
- * @license  MIT
- */
-
-module.exports = function isBuffer (obj) {
-  return obj != null && obj.constructor != null &&
-    typeof obj.constructor.isBuffer === 'function' && obj.constructor.isBuffer(obj)
-}
-
-
-/***/ }),
-
 /***/ "./node_modules/babel-loader/lib/index.js!./node_modules/vue-loader/lib/index.js?!./src/App.vue?vue&type=script&lang=js&":
 /*!********************************************************************************************************************************!*\
   !*** ./node_modules/babel-loader/lib!./node_modules/vue-loader/lib??vue-loader-options!./src/App.vue?vue&type=script&lang=js& ***!
@@ -1734,6 +1778,58 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var nextcloud_vue_dist_Components_Modal__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(nextcloud_vue_dist_Components_Modal__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var nextcloud_axios__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! nextcloud-axios */ "./node_modules/nextcloud-axios/dist/client.js");
 /* harmony import */ var nextcloud_axios__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(nextcloud_axios__WEBPACK_IMPORTED_MODULE_1__);
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -2156,7 +2252,7 @@ var urlEscape = __webpack_require__(/*! ../node_modules/css-loader/dist/runtime/
 var ___CSS_LOADER_URL___0___ = urlEscape(__webpack_require__(/*! ../img/logo-firstrunwizard.svg */ "./img/logo-firstrunwizard.svg"));
 
 // Module
-exports.push([module.i, "/* Page styling needs to be unscoped, since we load it separately from the server */\n#firstrunwizard .page {\n  display: flex;\n  flex-direction: row;\n  flex-wrap: wrap;\n}\n#firstrunwizard .page:not(.intro) {\n    overflow: auto;\n    max-height: 60vh;\n}\n#firstrunwizard .page.intro {\n    margin: 0 0 -60px;\n    max-height: 60vh;\n    width: 70vw;\n}\n#firstrunwizard .page.intro .content {\n      padding: 0;\n      background-image: url(" + ___CSS_LOADER_URL___0___ + ");\n      background-position: center;\n      background-size: auto;\n      background-repeat: no-repeat;\n      height: 50vh;\n}\n#firstrunwizard .page.intro .content img {\n        width: 100%;\n}\n#firstrunwizard .page h3 {\n    margin: 10px 0 10px;\n    line-height: 120%;\n    padding: 0;\n}\n#firstrunwizard .page .image {\n    padding: 20px;\n    max-width: calc(50% - 40px);\n    flex-grow: 1;\n}\n#firstrunwizard .page .image img {\n      width: 100%;\n}\n#firstrunwizard .page .content {\n    padding: 20px;\n    width: 100%;\n}\n#firstrunwizard .page p {\n    margin-bottom: 20px;\n}\n#firstrunwizard .page .description-block {\n    margin-bottom: 40px;\n}\n#firstrunwizard .page .description {\n    margin: 20px;\n    width: auto;\n    flex-grow: 1;\n    max-width: calc(50% - 40px);\n}\n#firstrunwizard .page ul {\n    margin: 10px;\n}\n#firstrunwizard .page ul li {\n      margin-left: 20px;\n      margin-bottom: 10px;\n      list-style: circle outside;\n}\n#firstrunwizard .page a:not(.button):hover, #firstrunwizard .page a:not(.button):focus {\n    text-decoration: underline;\n}\n#firstrunwizard .page .button {\n    display: inline-block;\n}\n#firstrunwizard .page .button img {\n      width: 16px;\n      height: 16px;\n      opacity: .5;\n      margin-top: -3px;\n      vertical-align: middle;\n}\n#firstrunwizard .content-clients {\n  width: 100%;\n  text-align: center;\n}\n#firstrunwizard .content-clients a {\n    text-decoration: none;\n    display: inline-block;\n}\n#firstrunwizard .content-clients .clientslinks .appsmall {\n    height: 32px;\n    width: 32px;\n    position: relative;\n    opacity: .5;\n    vertical-align: middle;\n}\n#firstrunwizard .content-clients .clientslinks .button {\n    display: inline-block;\n    padding: 8px;\n    font-weight: normal;\n    font-size: 14px;\n}\n#firstrunwizard .content-final h3 {\n  background-position: 0;\n  background-size: 16px 16px;\n  padding-left: 26px;\n  opacity: .7;\n}\n#firstrunwizard p a {\n  font-weight: bold;\n  color: var(--color-primary);\n}\n#firstrunwizard p a:hover, #firstrunwizard p a:focus {\n    color: var(color-text-light);\n}\n#firstrunwizard .footnote {\n  margin-top: 40px;\n}\n#firstrunwizard .modal-wrapper .icon-next {\n  background-color: var(--color-primary);\n  color: var(--color-primary-text);\n  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.33);\n  left: 22px;\n}\n.clientslinks {\n  margin-top: 20px;\n  margin-bottom: 20px;\n}\n#wizard-values {\n  list-style-type: none;\n  display: flex;\n  flex-wrap: wrap;\n}\n#wizard-values li {\n    display: block;\n    min-width: 250px;\n    width: 33%;\n    flex-grow: 1;\n    margin: 20px 0 20px 0;\n}\n#wizard-values li span {\n      opacity: .7;\n      display: block;\n      height: 50px;\n      width: 50px;\n      background-size: 40px;\n      margin: auto;\n}\n#wizard-values li h3 {\n      margin: 10px 0 10px 0;\n      font-size: 130%;\n      text-align: center;\n}\n.details-link {\n  text-align: center;\n}\n@media only screen and (max-width: 680px) {\n#firstrunwizard .firstrunwizard-header div.logo {\n    background-size: 120px;\n}\n#firstrunwizard .firstrunwizard-header div.logo-header {\n    background-size: 120px;\n}\n#firstrunwizard h2 {\n    font-size: 20px;\n}\n#firstrunwizard .page > div {\n    max-width: 100% !important;\n    width: 100%;\n}\n#firstrunwizard .page #wizard-values li {\n    min-width: 100%;\n    overflow: hidden;\n    display: flex;\n}\n#firstrunwizard .page #wizard-values li span {\n      width: 44px !important;\n      padding-right: 20px;\n      flex-grow: 0;\n}\n#firstrunwizard .page #wizard-values li h3 {\n      font-size: 12px;\n      text-align: left;\n      flex-grow: 1;\n}\n}\n", ""]);
+exports.push([module.i, "/* Page styling needs to be unscoped, since we load it separately from the server */\n#firstrunwizard .page {\n  display: flex;\n  flex-direction: row;\n  flex-wrap: wrap;\n}\n#firstrunwizard .page:not(.intro) {\n    overflow: auto;\n    max-height: 60vh;\n}\n#firstrunwizard .page.intro {\n    margin: 0;\n    max-height: 60vh;\n    width: 40vw;\n}\n#firstrunwizard .page.intro .content {\n      padding: 3%;\n      background-image: url(" + ___CSS_LOADER_URL___0___ + ");\n      background-position: center;\n      background-size: contain;\n      background-repeat: no-repeat;\n      height: 40vh;\n}\n#firstrunwizard .page.intro .content img {\n        width: 100%;\n}\n#firstrunwizard .page h3 {\n    margin: 10px 0 10px;\n    line-height: 120%;\n    padding: 0;\n}\n#firstrunwizard .page .image {\n    padding: 20px;\n    max-width: calc(50% - 40px);\n    flex-grow: 1;\n}\n#firstrunwizard .page .image img {\n      width: 100%;\n}\n#firstrunwizard .page .image-center {\n    padding: 20px;\n    max-width: calc(50% - 40px);\n    flex-grow: 1;\n    width: 50%;\n    margin: 0 auto;\n}\n#firstrunwizard .page .image-center img {\n      width: 100%;\n}\n#firstrunwizard .page .content {\n    padding: 20px;\n    width: 100%;\n}\n#firstrunwizard .page p {\n    margin-bottom: 20px;\n}\n#firstrunwizard .page .description-block {\n    margin-bottom: 40px;\n}\n#firstrunwizard .page .description {\n    margin: 20px;\n    width: auto;\n    flex-grow: 1;\n    max-width: calc(50% - 40px);\n}\n#firstrunwizard .page ul {\n    margin: 10px;\n}\n#firstrunwizard .page ul li {\n      margin-left: 20px;\n      margin-bottom: 10px;\n      list-style: circle outside;\n}\n#firstrunwizard .page a:not(.button):hover, #firstrunwizard .page a:not(.button):focus {\n    text-decoration: underline;\n}\n#firstrunwizard .page .button {\n    display: inline-block;\n}\n#firstrunwizard .page .button img {\n      width: 16px;\n      height: 16px;\n      opacity: .5;\n      margin-top: -3px;\n      vertical-align: middle;\n}\n#firstrunwizard .content-clients {\n  width: 100%;\n  text-align: center;\n}\n#firstrunwizard .content-clients a {\n    text-decoration: none;\n    display: inline-block;\n}\n#firstrunwizard .content-clients .clientslinks .appsmall {\n    height: 32px;\n    width: 32px;\n    position: relative;\n    opacity: .5;\n    vertical-align: middle;\n}\n#firstrunwizard .content-clients .clientslinks .button {\n    display: inline-block;\n    padding: 8px;\n    font-weight: normal;\n    font-size: 14px;\n}\n#firstrunwizard .content-final h3 {\n  background-position: 0;\n  background-size: 16px 16px;\n  padding-left: 26px;\n  opacity: .7;\n}\n#firstrunwizard .a {\n  font-weight: bold;\n  color: #E10528;\n}\n#firstrunwizard .footnote {\n  margin-top: 40px;\n}\n#firstrunwizard .modal-wrapper .icon-next {\n  background-color: var(--color-primary);\n  color: var(--color-primary-text);\n  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.33);\n  left: 22px;\n}\n.clientslinks {\n  margin-top: 20px;\n  margin-bottom: 20px;\n}\n#wizard-values {\n  list-style-type: none;\n  display: flex;\n  flex-wrap: wrap;\n}\n#wizard-values li {\n    display: block;\n    min-width: 250px;\n    width: 33%;\n    flex-grow: 1;\n    margin: 20px 0 20px 0;\n}\n#wizard-values li span {\n      opacity: .7;\n      display: block;\n      height: 50px;\n      width: 50px;\n      background-size: 40px;\n      margin: auto;\n}\n#wizard-values li h3 {\n      margin: 10px 0 10px 0;\n      font-size: 130%;\n      text-align: center;\n}\n#wizard-text-favicon {\n  display: flex;\n  flex-wrap: wrap;\n  height: 30px;\n  align-content: baseline;\n  font-size: 130%;\n}\n#wizard-text-favicon .favicon {\n    display: block;\n    background: var(--image-favicon) no-repeat center;\n    background-size: contain;\n    margin: 0;\n    max-height: 10vh;\n    width: 30px;\n}\n#wizard-values-sagis {\n  list-style-type: circle;\n  display: contents;\n  flex-wrap: nowrap;\n}\n#wizard-values-sagis li {\n    display: inherit;\n    min-width: 250px;\n    width: 33%;\n    flex-grow: 1;\n    margin: 20px 0 20px 0;\n    color: #E10528;\n}\n#wizard-values-sagis li span {\n      opacity: .8;\n      color: var(--color-primary-text);\n}\n#wizard-values-sagis li h3 {\n      margin: 10px 0 10px 0;\n      font-size: 130%;\n      text-align: left;\n      color: #E10528;\n}\n#wizard-values-sagis li h4 {\n      margin: 10px 0 10px 0;\n      font-size: 130%;\n      text-align: left;\n      color: var(--color-primary-text);\n}\n.details-link {\n  text-align: center;\n}\n@media only screen and (max-width: 680px) {\n#firstrunwizard .firstrunwizard-header div.logo {\n    background-size: 120px;\n}\n#firstrunwizard .firstrunwizard-header div.logo-header {\n    background-size: 120px;\n}\n#firstrunwizard h2 {\n    font-size: 20px;\n}\n#firstrunwizard .page > div {\n    max-width: 100% !important;\n    width: 100%;\n}\n#firstrunwizard .page #wizard-values li {\n    min-width: 100%;\n    overflow: hidden;\n    display: flex;\n}\n#firstrunwizard .page #wizard-values li span {\n      width: 44px !important;\n      padding-right: 20px;\n      flex-grow: 0;\n}\n#firstrunwizard .page #wizard-values li h3 {\n      font-size: 12px;\n      text-align: left;\n      flex-grow: 1;\n}\n}\n", ""]);
 
 
 
@@ -2171,7 +2267,7 @@ exports.push([module.i, "/* Page styling needs to be unscoped, since we load it 
 
 exports = module.exports = __webpack_require__(/*! ../node_modules/css-loader/dist/runtime/api.js */ "./node_modules/css-loader/dist/runtime/api.js")(false);
 // Module
-exports.push([module.i, ".modal-header[data-v-7ba5bd90] {\n  max-height: 30vh;\n  overflow: hidden;\n}\n.modal-header .firstrunwizard-header[data-v-7ba5bd90] {\n    padding: 20px 12px;\n    background: var(--color-primary) var(--image-login-background) no-repeat 50% 50%;\n    background-size: cover;\n    color: var(--color-primary-text);\n    text-align: center;\n}\n.modal-header .firstrunwizard-header .logo-header[data-v-7ba5bd90] {\n      background: var(--image-logoheader) no-repeat left;\n      background-size: contain;\n      width: 175px;\n      height: 120px;\n      margin: 0 auto;\n      max-height: 10vh;\n}\n.modal-header .firstrunwizard-header .logo[data-v-7ba5bd90] {\n      background: var(--image-logo) no-repeat center;\n      background-size: contain;\n      width: 175px;\n      height: 120px;\n      margin: 0 auto;\n      max-height: 10vh;\n}\n.modal-body[data-v-7ba5bd90] {\n  margin: 0;\n  transition: all 1s;\n}\n.modal-default-button[data-v-7ba5bd90] {\n  float: right;\n}\n.modal-footer[data-v-7ba5bd90] {\n  overflow: hidden;\n}\n.modal-footer button[data-v-7ba5bd90] {\n  margin: 10px;\n  display: inline-block;\n}\n\n/* Transitions */\n.next-enter-active[data-v-7ba5bd90], .next-leave-active[data-v-7ba5bd90],\n.previous-enter-active[data-v-7ba5bd90], .previous-leave-active[data-v-7ba5bd90] {\n  transition: transform .1s, opacity .25s;\n}\n.next-enter[data-v-7ba5bd90] {\n  transform: translateX(50%);\n  opacity: 0;\n}\n.next-leave-to[data-v-7ba5bd90] {\n  transform: translateX(-50%);\n  opacity: 0;\n}\n.previous-enter[data-v-7ba5bd90] {\n  transform: translateX(-50%);\n  opacity: 0;\n}\n.previous-leave-to[data-v-7ba5bd90] {\n  transform: translateX(50%);\n  opacity: 0;\n}\n", ""]);
+exports.push([module.i, ".modal-header[data-v-7ba5bd90] {\n  max-height: 30vh;\n  overflow: hidden;\n}\n.modal-header .firstrunwizard-header[data-v-7ba5bd90] {\n    padding: 0;\n    background: var(--color-primary) var(--image-login-background) no-repeat 50% 50%;\n    background-size: cover;\n    color: var(--color-primary-text);\n    text-align: center;\n}\n.modal-header .firstrunwizard-header .logo-header[data-v-7ba5bd90] {\n      background: var(--image-logoheader) no-repeat left;\n      background-size: contain;\n      width: auto;\n      height: 120px;\n      margin: 0 auto;\n      max-height: 10vh;\n}\n.modal-header .firstrunwizard-header .logo[data-v-7ba5bd90] {\n      background: var(--image-logo) no-repeat center;\n      background-size: contain;\n      width: 175px;\n      height: 120px;\n      margin: 0 auto;\n      max-height: 10vh;\n}\n.modal-header .firstrunwizard-header h2[data-v-7ba5bd90] {\n      font-size: 4vh;\n      margin-top: 3vh;\n      line-height: 5vh;\n      color: var(--color-primary-text);\n      font-weight: 300;\n      padding: 0 0 10px;\n}\n.modal-body[data-v-7ba5bd90] {\n  margin: 0;\n  transition: all 1s;\n}\n.modal-default-button[data-v-7ba5bd90] {\n  float: right;\n}\n.modal-footer[data-v-7ba5bd90] {\n  overflow: hidden;\n}\n.modal-footer button[data-v-7ba5bd90] {\n  margin: 10px;\n  display: inline-block;\n}\n\n/* Transitions */\n.next-enter-active[data-v-7ba5bd90], .next-leave-active[data-v-7ba5bd90],\n.previous-enter-active[data-v-7ba5bd90], .previous-leave-active[data-v-7ba5bd90] {\n  transition: transform .1s, opacity .25s;\n}\n.next-enter[data-v-7ba5bd90] {\n  transform: translateX(50%);\n  opacity: 0;\n}\n.next-leave-to[data-v-7ba5bd90] {\n  transform: translateX(-50%);\n  opacity: 0;\n}\n.previous-enter[data-v-7ba5bd90] {\n  transform: translateX(-50%);\n  opacity: 0;\n}\n.previous-leave-to[data-v-7ba5bd90] {\n  transform: translateX(50%);\n  opacity: 0;\n}\n", ""]);
 
 
 
@@ -2301,6 +2397,38 @@ module.exports = function escape(url, needQuotes) {
 
   return url;
 };
+
+/***/ }),
+
+/***/ "./node_modules/is-buffer/index.js":
+/*!*****************************************!*\
+  !*** ./node_modules/is-buffer/index.js ***!
+  \*****************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+/*!
+ * Determine if an object is a Buffer
+ *
+ * @author   Feross Aboukhadijeh <https://feross.org>
+ * @license  MIT
+ */
+
+// The _isBuffer check is for Safari 5-7 support, because it's missing
+// Object.prototype.constructor. Remove this eventually
+module.exports = function (obj) {
+  return obj != null && (isBuffer(obj) || isSlowBuffer(obj) || !!obj._isBuffer)
+}
+
+function isBuffer (obj) {
+  return !!obj.constructor && typeof obj.constructor.isBuffer === 'function' && obj.constructor.isBuffer(obj)
+}
+
+// For Node v0.10 support. Remove this eventually.
+function isSlowBuffer (obj) {
+  return typeof obj.readFloatLE === 'function' && typeof obj.slice === 'function' && isBuffer(obj.slice(0, 0))
+}
+
 
 /***/ }),
 
@@ -2982,14 +3110,6 @@ var render = function() {
         [
           _c("div", { staticClass: "modal-header" }, [
             _c("div", { staticClass: "firstrunwizard-header" }, [
-              _c("div", { staticClass: "logo" }, [
-                _c("p", { staticClass: "hidden-visually" }, [
-                  _vm._v(
-                    "\n\t\t\t\t\t" + _vm._s(_vm.oc_defaults.name) + "\n\t\t\t\t"
-                  )
-                ])
-              ]),
-              _vm._v(" "),
               _c("div", { staticClass: "logo-header" }, [
                 _c("p", { staticClass: "hidden-visually" }, [
                   _vm._v(

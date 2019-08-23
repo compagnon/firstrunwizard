@@ -12,18 +12,11 @@
 	>
 		<div class="modal-header">
 			<div class="firstrunwizard-header">
-				<div class="logo">
-					<p class="hidden-visually">
-						{{ oc_defaults.name }}
-					</p>
-				</div>
 				<div class="logo-header">
 					<p class="hidden-visually">
 						{{ oc_defaults.name }}
 					</p>
 				</div>
-				<!-- eslint-disable-next-line vue/no-v-html -->
-				<!--h2 v-html="oc_defaults.slogan" /-->
 				<p />
 			</div>
 		</div>
@@ -56,23 +49,22 @@
 				max-height: 60vh;
 			}
 			&.intro {
-				margin: 0 0 -60px;
+				margin: 0;
 				max-height: 60vh;
-				width: 70vw;
+				width: 40vw;
 				.content {
-					padding: 0;
+					padding: 3%;
 					background-image: url('../img/logo-firstrunwizard.svg');
 					background-position: center;
-					background-size: auto;
+					background-size: contain;
 					background-repeat: no-repeat;
-					height: 50vh;
+					height: 40vh;
 
 					img {
 						width: 100%;
 					}
 				}
 			}
-
 			h3 {
 				margin: 10px 0 10px;
 				line-height: 120%;
@@ -82,6 +74,16 @@
 				padding: 20px;
 				max-width: calc(50% - 40px);
 				flex-grow: 1;
+				img {
+					width: 100%;
+				}
+			}
+			.image-center {
+				padding: 20px;
+				max-width: calc(50% - 40px);
+				flex-grow: 1;
+				width: 50%;
+				margin: 0 auto;
 				img {
 					width: 100%;
 				}
@@ -128,7 +130,6 @@
 				}
 			}
 		}
-
 		.content-clients {
 			width: 100%;
 			text-align: center;
@@ -158,13 +159,9 @@
 				opacity: .7;
 			}
 		}
-		p a {
+		.a {
 			font-weight: bold;
-			color: var(--color-primary);
-			&:hover,
-			&:focus {
-				color: var(color-text-light);
-			}
+			color: #E10528;
 		}
 
 		.footnote {
@@ -207,6 +204,52 @@
 				margin: 10px 0 10px 0;
 				font-size: 130%;
 				text-align: center;
+			}
+		}
+	}
+
+	#wizard-text-favicon {
+		display: flex;
+		flex-wrap: wrap;
+		height: 30px;
+		align-content: baseline;
+		font-size: 130%;
+		.favicon {
+			display: block;
+			background: var(--image-favicon) no-repeat center;
+			background-size: contain;
+			margin: 0;
+			max-height: 10vh;
+			width: 30px;
+		}
+	}
+
+	#wizard-values-sagis {
+		list-style-type: circle;
+		display: contents;
+		flex-wrap: nowrap;
+		li {
+			display: inherit;
+			min-width: 250px;
+			width: 33%;
+			flex-grow: 1;
+			margin: 20px 0 20px 0;
+			color: #E10528;
+			span {
+				opacity: .8;
+				color: var(--color-primary-text);
+			}
+			h3 {
+				margin: 10px 0 10px 0;
+				font-size: 130%;
+				text-align: left;
+				color: #E10528;
+			}
+			h4 {
+				margin: 10px 0 10px 0;
+				font-size: 130%;
+				text-align: left;
+				color: var(--color-primary-text);
 			}
 		}
 	}
@@ -257,7 +300,7 @@
 		overflow: hidden;
 
 		.firstrunwizard-header {
-			padding: 20px 12px;
+			padding: 0;
 			background: var(--color-primary) var(--image-login-background) no-repeat 50% 50%;
 			background-size: cover;
 			color: var(--color-primary-text);
@@ -265,7 +308,7 @@
 			.logo-header {
 				background: var(--image-logoheader) no-repeat left;
 				background-size: contain;
-				width: 175px;
+				width: auto;
 				height: 120px;
 				margin: 0 auto;
 				max-height: 10vh;
@@ -278,7 +321,8 @@
 				margin: 0 auto;
 				max-height: 10vh;
 			}
-						h2 {
+
+			h2 {
 				font-size: 4vh;
 				margin-top: 3vh;
 				line-height: 5vh;
