@@ -81,6 +81,8 @@ class WizardController extends Controller {
 			'appStore'     => $this->config->getSystemValue('appstoreenabled', true),
 			'useTLS'       => $this->request->getServerProtocol() === 'https',
 			'macOSProfile' => \OCP\Util::linkToRemote('dav') . 'provisioning/apple-provisioning.mobileconfig',
+			'imprintUrl'   => $this->config->getAppValue('theming', 'imprintUrl', ''),
+			'privacyUrl'   => $this->config->getAppValue('theming', 'privacyUrl', ''),
 		];
 
 		$slides = [
@@ -92,10 +94,6 @@ class WizardController extends Controller {
 			$this->staticSlide('page.contact.sagis', $data),
 			$this->staticSlide('page.clientsmobiles.sagis', $data),
 			$this->staticSlide('page.final.sagis', $data),
-			$this->staticSlide('page.values', $data),
-			$this->staticSlide('page.apps', $data),
-			$this->staticSlide('page.clients', $data),			
-			$this->staticSlide('page.final', $data),
 		];
 
 		return new JSONResponse($slides);

@@ -30,18 +30,18 @@
 
 <div class="page" data-title="<?php p($l->t('Stay in sync')); ?>" data-subtitle="">
 	<div class="content content-clients">
-	<div class="description-block">
-	<ul id="wizard-values-sagis">
-			<li>
-				<h3>En quelques clics, obtenez les applications permettant</h3>
-			</li>
-			<li>
-				<h3>L'installation de votre coffre-fort directement sur votre mobile.</h3>
-			</li>
-			<li>
-				<h3>Le téléchargement de tous vos documents importants depuis votre ordinateur, <br />directement dans votre coffre-fort</h3>
-			</li>
-		</ul>
+		<div class="description-block">
+			<ul id="wizard-values-sagis">
+				<li>
+					<h3><span>En quelques clics, obtenez les</span> applications <span>permettant:</span></h3>
+				</li>
+				<li>
+					<h3><span>-L'installation de votre coffre-fort directement sur votre mobile.</span></h3>
+				</li>
+				<li>
+					<h3><span>-Le téléchargement de tous vos documents importants depuis votre ordinateur, <br />directement dans votre coffre-fort</span></h3>
+				</li>
+			</ul>
 		</div>
 		<div class="description-block">
 			<a target="_blank" href="<?php p($_['desktop']); ?>" rel="noreferrer noopener">

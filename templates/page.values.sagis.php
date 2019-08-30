@@ -38,18 +38,18 @@
 			<img src="<?php p($theme->getLogo()); ?>"/>
 			<?php endif; ?>
 		</div>
-<div class="description-block">
-		<ul id="wizard-values-sagis">
-			<li>
-				<h3>Archivez <span>vos documents importants en ligne, dans votre coffre-fort</span></h3>
-			</li>
-			<li>				
-				<h3>Consultez <span>vos documents où et quand vous voulez, depuis votre mobile et depuis n'importe quel ordinateur</span></h3>
-			</li>
-			<li>
-				<h3>Bénéficiez <span>d'un niveau de sécurité supérieur à celui de votre boite emails</span></h3>
-			</li>
-		</ul>
-</div>
+		<div class="description-block">
+			<ul id="wizard-values-sagis">
+				<li>
+					<h3>Archivez <span>vos documents importants en ligne, dans votre coffre-fort</span></h3>
+				</li>
+				<li>
+					<h3>Consultez <span>vos documents où et quand vous voulez, depuis votre mobile et depuis n'importe quel ordinateur</span></h3>
+				</li>
+				<li>
+					<h3>Bénéficiez <span>d'un niveau de sécurité supérieur à celui de votre boite emails</span></h3>
+				</li>
+			</ul>
+		</div>
 	</div>
 </div>

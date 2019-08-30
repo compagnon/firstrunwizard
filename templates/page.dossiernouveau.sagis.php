@@ -29,15 +29,15 @@
 <div class="page" data-title="<?php p($l->t('A safe home for all your data')); ?>" data-subtitle="">
 	<div class="image"><img src="<?php p(image_path('firstrunwizard', 'sagis1.png')); ?>" /></div>
 	<div class="description">
-	<ul id="wizard-values">
+	<ul id="wizard-values-sagis">
 			<li>
-				<h3>Créez vos dossiers d'archivage</h3>
+				<h3><span>Créez vos dossiers d'archivage</span></h3>
 			</li>
 			<li>
-				<h3>et archivez vos documents importants</h3>
+				<h3><span>et archivez vos documents importants</span></h3>
 			</li>
 			<li>
-				<h3>en cliquant sur l'icone +</h3>
+				<h3><span>en cliquant sur l'icone +</span></h3>
 			</li>
 	</ul>
 	</div>

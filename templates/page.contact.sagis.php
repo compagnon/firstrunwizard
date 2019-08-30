@@ -28,17 +28,11 @@
 
 <div class="page" data-title="<?php p($l->t('A safe home for all your data')); ?>" data-subtitle="">
 	<div class="description">
-	<ul id="wizard-values">
-			<li>
-				<h3>En cas de besoin,</h3>
-			</li>
-			<li>
-				<h3>contactez notre équipe</h3>
-			</li>
-			<li>
-				<h3>de <A href="mailto:coffre@sagis-am.com?subject=contact support technique"> support technique.</A></h3>
-			</li>
+	<ul id="wizard-values-sagis">
+		En cas de besoin,<br />
+		contactez notre équipe<br />
+		de <a href="mailto:coffre@sagis-am.com?subject=contact support technique"> support technique.
 	</ul>
-	</div>	
-	<div class="image"><A href="mailto:coffre@sagis-am.com?subject=contact support technique"><img src="<?php p(image_path('firstrunwizard', 'Carte de visite_Support technique.png')); ?>" /></a></div>
+	</div>
+	<div class="image-center"><A href="mailto:coffre@sagis-am.com?subject=contact support technique"><img src="<?php p(image_path('firstrunwizard', 'Carte de visite_Support technique.png')); ?>" /></a></div>
 </div>

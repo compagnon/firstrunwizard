@@ -159,10 +159,6 @@
 				opacity: .7;
 			}
 		}
-		.a {
-			font-weight: bold;
-			color: #E10528;
-		}
 
 		.footnote {
 			margin-top: 40px;
@@ -226,10 +222,13 @@
 
 	#wizard-values-sagis {
 		list-style-type: circle;
-		display: contents;
-		flex-wrap: nowrap;
+		display: inherit;
+		flex-wrap: line;
+		margin: 10px 0 10px 0;
+		font-size: 130%;
+		text-align: center;
 		li {
-			display: inherit;
+			display: contents;
 			min-width: 250px;
 			width: 33%;
 			flex-grow: 1;
@@ -240,18 +239,20 @@
 				color: var(--color-primary-text);
 			}
 			h3 {
-				margin: 10px 0 10px 0;
-				font-size: 130%;
 				text-align: left;
 				color: #E10528;
 			}
 			h4 {
-				margin: 10px 0 10px 0;
-				font-size: 130%;
 				text-align: left;
+				opacity: .8;
 				color: var(--color-primary-text);
 			}
 		}
+		a {
+			font-weight: bold;
+			color: #E10528;
+		}
+
 	}
 
 	.details-link {

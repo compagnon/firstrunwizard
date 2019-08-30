@@ -29,18 +29,18 @@
 <div class="page" data-title="<?php p($l->t('A safe home for all your data')); ?>" data-subtitle="">
 	<div class="image"><img src="<?php p(image_path('firstrunwizard', 'sagis2.png')); ?>" /></div>
 	<div class="description">
-	<ul id="wizard-values">
+	<ul id="wizard-values-sagis">
 			<li>
-				<h3>Découvrez le guide d'utilisation complet</h3>
+				<h3><span>Découvrez le guide d'utilisation complet</span></h3>
 			</li>
 			<li>
-				<h3>de votre coffre-fort dans la rubrique "Aide"</h3>
+				<h3><span>de votre coffre-fort dans la rubrique "Aide"</span></h3>
 			</li>
 			<li>
-				<h3>accessible depuis le menu de navigation</h3>
+				<h3><span>accessible depuis le menu de navigation</span></h3>
 			</li>
 			<li>
-				<h3>(en haut à droite de votre écran)</h3>
+				<h3><span>(en haut à droite de votre écran)</span></h3>
 			</li>
 	</ul>
 	</div>
