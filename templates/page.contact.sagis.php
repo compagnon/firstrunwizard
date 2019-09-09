@@ -34,5 +34,5 @@
 		de <a href="mailto:coffre@sagis-am.com?subject=contact support technique"> support technique.
 	</ul>
 	</div>
-	<div class="image-center"><A href="mailto:coffre@sagis-am.com?subject=contact support technique"><img src="<?php p(image_path('firstrunwizard', 'Carte de visite_Support technique.png')); ?>" /></a></div>
+	<div class="image-center"><A href="mailto:coffre@sagis-am.com?subject=contact support technique"><img src="<?php p(image_path('firstrunwizard', 'Carte de visite_Support technique.svg')); ?>" /></a></div>
 </div>
